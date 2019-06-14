@@ -3,9 +3,13 @@ const Schema = mongoose.Schema;
 
 // Define collection and schema for Business
 let Assignment = new Schema({
-    deadline: {
+    deadlinedate: {
         type: String
     },
+    deadlinetime:{
+        type: String
+    },
+
     name: {
         type: String
     },
@@ -23,9 +27,16 @@ let Assignment = new Schema({
     },
     uploadedate:{
         type:String
+    },
+    uploadtime:{
+        type:String
+    },
+
+    late:{
+        type:String
     }
 },{
-    collection: 'Assignment'
+    collection: 'Assignment1'
 });
 
 module.exports = mongoose.model('Assignment', Assignment);

@@ -11,7 +11,7 @@ class StudentView extends Component {
         this.state = {
             files: [],
             file: '',
-            lecturer:'sub',
+            student1:'stu',
             info:[]
         }
 
@@ -19,7 +19,9 @@ class StudentView extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3001/api/lecview/'+this.state.lecturer)
+
+
+        axios.get('http://localhost:3001/api/stuview/'+this.state.student1)
             .then(response => {
 
                 console.log(response.data)
@@ -58,14 +60,19 @@ class StudentView extends Component {
             res=>{
 
                 console.log()
+                event.preventDefault();
             }
+
+
         )
+
+        this.props.history.push('/FileUpload')
     }
 
 
 
     render() {
-        const { files } = this.state;
+
         return (
             <div className="App">
                 <header className="App-header">
@@ -78,8 +85,13 @@ class StudentView extends Component {
                         <thead>
                         <tr>
                             <th>File</th>
+                            <th>Subject</th>
+                            <th>Uploaded Date</th>
 
+                            <th>Student</th>
+                            <th>Deadline</th>
                             <th>Action</th>
+
                             <th></th>
                         </tr>
                         </thead>
@@ -90,7 +102,11 @@ class StudentView extends Component {
                                 <tr key={index}>
                                     <td><a href={`http://localhost:3001/api/files/${obj.filename}`}>{obj.filename}</a></td>
 
-                                    <td><button onClick={this.deleteFile.bind(this)} id={obj.filename}>Remove</button></td>
+                                    <td>{obj.subject}</td>
+                                    <td>{obj.uploadedate}</td>
+                                    <td>{obj.student}</td>
+                                    <td>{obj.deadline}</td>
+                                    <td><button onClick={this.deleteFile.bind(this)} id={obj.filename}>Delete</button></td>
                                 </tr>
                             )
                         })}

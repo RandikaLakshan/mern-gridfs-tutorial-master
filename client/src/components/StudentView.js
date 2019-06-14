@@ -85,6 +85,7 @@ class StudentView extends Component {
                             <th>File</th>
                             <th>Subject</th>
                             <th>Uploaded Date</th>
+                            <th>Deadline</th>
                             <th>Action</th>
 
                             <th></th>
@@ -99,6 +100,8 @@ class StudentView extends Component {
 
                                     <td>{obj.subject}</td>
                                     <td>{obj.uploadedate}</td>
+                                    <td>{obj.deadline}</td>
+
                                     <td><button onClick={this.deleteFile.bind(this)} id={obj.filename}>Edit</button></td>
                                 </tr>
                             )

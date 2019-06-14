@@ -10,13 +10,17 @@ class FileUploadView extends Component {
         this.state = {
             files: [],
             file: '',
-            deadline:'111',
+            deadlinedate:'20/12/2017',
+            deadlinetime:'23:20:11',
             name:'n',
             subject:'sub',
             lecturer:'l',
             student:'stu',
             filename:'',
             uploadeddate:'',
+            uploadtime:'',
+            late:'',
+
             info:[]
         }
 
@@ -24,7 +28,9 @@ class FileUploadView extends Component {
     }
 
     componentDidMount() {
+
         this.loadFiles();
+
     }
 
     loadFiles() {
@@ -49,7 +55,42 @@ class FileUploadView extends Component {
 
 
     uploadFile(event) {
-        event.preventDefault();
+
+        let newDate = new Date()
+        let date = newDate.getDate();
+
+        console.log(this.state.deadlinedate.indexOf('/')+1);
+        console.log(this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/')));
+
+        let slate=this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/'))
+        let stmeh=this.state.deadlinetime.substring(0,this.state.deadlinetime.indexOf(':'))
+        let stmem=this.state.deadlinetime.substring(this.state.deadlinetime.indexOf(':'),this.state.deadlinetime.indexOf(':'))
+        console.log(stmem)
+
+        if((slate-date)>=0){
+
+            //alert("Not a Late submission")
+            this.setState({
+
+                late:"Not a Late submission"
+
+            })
+        }
+        else{
+
+            alert(slate-date)
+            this.setState({
+
+                late:(slate-date)
+
+            })
+        }
+
+        alert(this.state.late)
+
+
+
+
 
         axios.get('http://localhost:3001/api/checkview/'+this.state.file.name).then(
             res=>{
@@ -79,6 +120,15 @@ class FileUploadView extends Component {
 
                         //let x=this.state.file.uploadDate
                         console.log(this.state.file.lastModifiedDate)
+
+                        let newDate = new Date()
+                        let date = newDate.getDate();
+                        let month = newDate.getMonth()+1;
+                        let year = newDate.getFullYear();
+
+                        var hours = new Date(). getHours(); //Current Hours.
+                        var min = new Date(). getMinutes(); //Current Minutes.
+                        var sec = new Date(). getSeconds(); //Current Seconds
                         const obj = {
 
 
@@ -87,7 +137,12 @@ class FileUploadView extends Component {
                             lecturer: this.state.subject,
                             student: this.state.student,
                             filename: this.state.file.name,
-                            uploadedate: this.state.file.lastModifiedDate.toLocaleDateString() + "    " + this.state.file.lastModifiedDate.toLocaleTimeString()
+                            deadlinedate:this.state.deadlinedate,
+                            deadlinetime:this.state.deadlinetime,
+
+                            uploadedate:  date+'/'+ month+'/'+year,
+                            uploadtime:  hours+'/'+ min+'/'+sec,
+                            late:this.state.late
                         }
 
                         axios.post('http://localhost:3001/api/add', obj).then(
