@@ -16,7 +16,8 @@ class FileUploadView extends Component {
             lecturer:'l',
             student:'stu',
             filename:'',
-            uploadeddate:''
+            uploadeddate:'',
+            info:[]
         }
 
         this.loadFiles = this.loadFiles.bind(this);
@@ -49,42 +50,74 @@ class FileUploadView extends Component {
 
     uploadFile(event) {
         event.preventDefault();
-        let data = new FormData();
-        data.append('file', this.state.file);
 
-        fetch('/api/files', {
-            method: 'POST',
-            body: data
-        }).then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    this.loadFiles();
-                } else {
-                    alert('Upload failed');
+        axios.get('http://localhost:3001/api/checkview/'+this.state.file.name).then(
+            res=>{
+                console.log(res)
+                this.setState({
+
+                    info:res.data
+                })
+
+                if(this.state.info==''){
+
+                    if((this.state.file.size/1024)<10240) {
+                        let data = new FormData();
+                        data.append('file', this.state.file);
+
+                        fetch('/api/files', {
+                            method: 'POST',
+                            body: data
+                        }).then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.loadFiles();
+                                } else {
+                                    alert('Upload failed');
+                                }
+                            });
+
+                        //let x=this.state.file.uploadDate
+                        console.log(this.state.file.lastModifiedDate)
+                        const obj = {
+
+
+                            name: this.state.name,
+                            subject: this.state.subject,
+                            lecturer: this.state.subject,
+                            student: this.state.student,
+                            filename: this.state.file.name,
+                            uploadedate: this.state.file.lastModifiedDate.toLocaleDateString() + "    " + this.state.file.lastModifiedDate.toLocaleTimeString()
+                        }
+
+                        axios.post('http://localhost:3001/api/add', obj).then(
+                            res => console.log(res.data)
+                        ).catch(err => {
+                                console.log(err)
+                            }
+                        )
+                    }
+
+                    else{
+
+                        alert("Select >10MB file please! ");
+                    }
                 }
-            });
 
-        //let x=this.state.file.uploadDate
-        console.log(this.state.file.lastModifiedDate)
-        const obj={
+                else{
 
+                    alert("Same file exists!")
+                }
 
-
-            name:this.state.name,
-            subject:this.state.subject,
-            lecturer:this.state.subject,
-            student:this.state.student,
-            filename:this.state.file.name,
-            uploadedate :this.state.file.lastModifiedDate.toLocaleDateString()+"    " +this.state.file.lastModifiedDate.toLocaleTimeString()
-        }
-
-        axios.post('http://localhost:3001/api/add',obj).then(
-            res => console.log(res.data)
-        ).catch(err=>
-            {
-                console.log(err)
             }
-        )
+        ).catch(err=>{
+
+            console.log(err);
+        })
+
+
+
+
 
 
 }

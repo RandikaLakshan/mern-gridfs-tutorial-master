@@ -69,6 +69,16 @@ router.get('/files/:filename', (req, res) => {
    });
 });
 
+router.route('/checkview/:assid').get(function (req, res) {
+
+   let assid = req.params.assid;
+
+
+   Assignment.find({filename:assid}, function (err, Assignment){
+      res.json(Assignment);
+   });
+});
+
 router.get('/files', (req, res) => {
    gfs.files.find().toArray((err, files) => {
       if(!files || files.length === 0){
