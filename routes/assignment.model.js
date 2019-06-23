@@ -34,6 +34,9 @@ let Assignment = new Schema({
 
     late:{
         type:String
+    },
+    uname:{
+        type:String
     }
 },{
     collection: 'Assignment1'

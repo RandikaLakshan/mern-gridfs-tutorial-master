@@ -10,18 +10,21 @@ class FileUploadView extends Component {
         this.state = {
             files: [],
             file: '',
-            deadlinedate:'20/12/2017',
+            deadlinedate:"20/12/2018",
             deadlinetime:'23:20:11',
-            name:'n',
-            subject:'sub',
-            lecturer:'l',
-            student:'stu',
+            name:'n2',
+            subject:'sub2',
+            lecturer:'l11',
+            student:'stu1',
             filename:'',
             uploadeddate:'',
             uploadtime:'',
-            late:'',
+            late:'OK',
+            info:[],
+            sizealert:'',
+            namealert:'',
+            ofilename:''
 
-            info:[]
         }
 
         this.loadFiles = this.loadFiles.bind(this);
@@ -29,21 +32,15 @@ class FileUploadView extends Component {
 
     componentDidMount() {
 
+
         this.loadFiles();
 
     }
 
     loadFiles() {
-        fetch('/api/files')
-            .then(res => res.json())
-            .then(files => {
-                if (files.message) {
-                    console.log('No Files');
-                    this.setState({ files: [] })
-                } else {
-                    this.setState({ files })
-                }
-            });
+
+
+
     }
 
     fileChanged(event) {
@@ -56,126 +53,197 @@ class FileUploadView extends Component {
 
     uploadFile(event) {
 
+
+
         let newDate = new Date()
         let date = newDate.getDate();
+        let month = newDate.getMonth()+1;
+        let year = newDate.getFullYear();
 
-        console.log(this.state.deadlinedate.indexOf('/')+1);
-        console.log(this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/')));
+        var hours = new Date(). getHours(); //Current Hours.
+        var min = new Date(). getMinutes(); //Current Minutes.
+        var sec = new Date(). getSeconds(); //Current Seconds
 
-        let slate=this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/'))
-        let stmeh=this.state.deadlinetime.substring(0,this.state.deadlinetime.indexOf(':'))
-        let stmem=this.state.deadlinetime.substring(this.state.deadlinetime.indexOf(':'),this.state.deadlinetime.indexOf(':'))
-        console.log(stmem)
-
-        if((slate-date)>=0){
-
-            //alert("Not a Late submission")
-            this.setState({
-
-                late:"Not a Late submission"
-
-            })
+        if(date<10){
+            date='0'+date;
         }
-        else{
-
-            alert(slate-date)
-            this.setState({
-
-                late:(slate-date)
-
-            })
+        if(month<10){
+            month='0'+month;
+        }
+        if(hours<10){
+            hours='0'+hours;
+        }
+        if(min<10){
+            min='0'+min;
         }
 
-        alert(this.state.late)
+        let sud=+year+'/'+month+'/'+date
+        let sut=+hours+':'+min+':'+sec
+
+        alert(date+month+year)
+
+       // console.log(this.state.deadlinedate.indexOf('/')+1);
+       // console.log(this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/')));
+        //console.log(this.state.deadlinedate.substring(0,this.state.deadlinedate.indexOf('/')));
+
+
+
+        let ldd=(this.state.deadlinedate.replace("/","").replace("/",""))
+        let ldt=(this.state.deadlinetime.replace(":","").replace(":",""))
+
+        let lud=(sud.replace("/","").replace("/",""))
+        let lut=(sut.replace(":","").replace(":",""))
+
+
+
+        if(ldd>lud){
+
+            this.setState({
+
+                late:("Late Submission before  "+(ldd-lud)+" days")
+            },()=>{
+
+                alert("Late Submission before   "+(ldd-lud+" days"))
+            })
+        }
+
+         else if(lud>ldd){
+
+            this.setState({
+
+                late:'Uploaded before   '+(lud-ldd)+"  days"
+            },()=>{
+
+                alert("OK!")
+            })
+        }
 
 
 
 
 
-        axios.get('http://localhost:3001/api/checkview/'+this.state.file.name).then(
-            res=>{
-                console.log(res)
-                this.setState({
 
-                    info:res.data
-                })
+            axios.get('http://localhost:3001/api/checkview/' + this.state.file.name).then(
+                res => {
+                    console.log(res)
+                    this.setState({
 
-                if(this.state.info==''){
+                        info: res.data
+                    })
 
-                    if((this.state.file.size/1024)<10240) {
-                        let data = new FormData();
-                        data.append('file', this.state.file);
+                    if (this.state.info == '') {
 
-                        fetch('/api/files', {
-                            method: 'POST',
-                            body: data
-                        }).then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    this.loadFiles();
-                                } else {
-                                    alert('Upload failed');
-                                }
-                            });
+                        if ((this.state.file.size / 1024) < 10240) {
+                            let data = new FormData();
+                            data.append('file', this.state.file);
 
-                        //let x=this.state.file.uploadDate
-                        console.log(this.state.file.lastModifiedDate)
+                            fetch('/api/files', {
+                                method: 'POST',
+                                body: data
+                            }).then(res => res.json())
+                                .then(data => {
 
-                        let newDate = new Date()
-                        let date = newDate.getDate();
-                        let month = newDate.getMonth()+1;
-                        let year = newDate.getFullYear();
+                                    if (data.success) {
+                                        axios.get("http://localhost:3001/api/getlast").then(res1=>{
 
-                        var hours = new Date(). getHours(); //Current Hours.
-                        var min = new Date(). getMinutes(); //Current Minutes.
-                        var sec = new Date(). getSeconds(); //Current Seconds
-                        const obj = {
+                                console.log(res1.data.filename)
+                                            this.setState({
+
+                                                ofilename:res1.data.filename
+                                            })
+                                            console.log(res1.data.ofilename)
+                                            if(date<10){
+                                                date='0'+date;
+                                            }
+                                            if(month<10){
+                                                month='0'+month;
+                                            }
+                                            if(hours<10){
+                                                hours='0'+hours;
+                                            }
+                                            if(min<10){
+                                                min='0'+min;
+                                            }
+                                            const obj = {
 
 
-                            name: this.state.name,
-                            subject: this.state.subject,
-                            lecturer: this.state.subject,
-                            student: this.state.student,
-                            filename: this.state.file.name,
-                            deadlinedate:this.state.deadlinedate,
-                            deadlinetime:this.state.deadlinetime,
+                                                name: this.state.name,
+                                                subject: this.state.subject,
+                                                lecturer: this.state.lecturer,
+                                                student: this.state.student,
+                                                uname: this.state.file.name,
+                                                deadlinedate: this.state.deadlinedate,
+                                                deadlinetime: this.state.deadlinetime,
+                                                uploadedate: year + '/' + month + '/' + date,
+                                                uploadtime: hours + ':' + min + ':' + sec,
+                                                late: this.state.late,
+                                                filename:this.state.ofilename
+                                            }
 
-                            uploadedate:  date+'/'+ month+'/'+year,
-                            uploadtime:  hours+'/'+ min+'/'+sec,
-                            late:this.state.late
+
+                                            axios.post('http://localhost:3001/api/add', obj).then(
+                                                res => {console.log(res.data)
+
+                                                    this.setState({
+
+                                                        status:"Uploaded Successfully",
+                                                        namealert:'',
+                                                        sizealert:''
+
+                                                    })}
+                                            ).catch(err => {
+                                                    console.log(err)
+                                                }
+                                            )
+
+
+
+                                        }).catch(err1=>{
+                                                    console.log(err1)
+                                                }
+                                            )
+
+                                        console.log(data)
+                                    } else {
+                                        alert('Upload failed');
+                                    }
+                                });
+
+                            //let x=this.state.file.uploadDate
+                            console.log(this.state.file.lastModifiedDate)
+
+                            let newDate = new Date()
+                            let date = newDate.getDate();
+                            let month = newDate.getMonth() + 1;
+                            let year = newDate.getFullYear();
+
+                            var hours = new Date().getHours(); //Current Hours.
+                            var min = new Date().getMinutes(); //Current Minutes.
+                            var sec = new Date().getSeconds(); //Current Seconds
+
+                        } else {
+
+                            this.setState({
+                               sizealert:'Select a File size < 10MB'
+                            })
+
+                            alert(this.state.sizealert);
                         }
+                    } else {
+                        this.setState({
+                            namealert:'Already has a Same same!'
+                        })
 
-                        axios.post('http://localhost:3001/api/add', obj).then(
-                            res => console.log(res.data)
-                        ).catch(err => {
-                                console.log(err)
-                            }
-                        )
+                        alert(this.state.namealert);
                     }
 
-                    else{
-
-                        alert("Select >10MB file please! ");
-                    }
                 }
+            ).catch(err => {
 
-                else{
+                console.log(err);
+            })
 
-                    alert("Same file exists!")
-                }
-
-            }
-        ).catch(err=>{
-
-            console.log(err);
-        })
-
-
-
-
-
-
-}
+        }
 
 
     render() {
@@ -189,6 +257,11 @@ class FileUploadView extends Component {
                 <div className="App-content">
                     <input type="file" onChange={this.fileChanged.bind(this)}/>
                     <button onClick={this.uploadFile.bind(this)}>Upload</button>
+
+                    <h2>{this.state.namealert}</h2>
+                    <h2>{this.state.sizealert}</h2>
+                    <h2>{this.state.status}</h2>
+
 
                 </div>
             </div>

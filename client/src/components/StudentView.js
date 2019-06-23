@@ -83,9 +83,13 @@ class StudentView extends Component {
                         <thead>
                         <tr>
                             <th>File</th>
+                            <th>Aassignment</th>
                             <th>Subject</th>
                             <th>Uploaded Date</th>
-                            <th>Deadline</th>
+                            <th>Uploaded Time</th>
+                            <th>Deadline Date</th>
+                            <th>Deadline Time</th>
+
                             <th>Action</th>
 
                             <th></th>
@@ -96,11 +100,13 @@ class StudentView extends Component {
 
                             return (
                                 <tr key={index}>
-                                    <td><a href={`http://localhost:3001/api/files/${obj.filename}`}>{obj.filename}</a></td>
-
+                                    <td><a href={`http://localhost:3001/api/files/${obj.filename}`}>{obj.uname}</a></td>
+                                    <td>{obj.name}</td>
                                     <td>{obj.subject}</td>
                                     <td>{obj.uploadedate}</td>
-                                    <td>{obj.deadline}</td>
+                                    <td>{obj.uploadtime}</td>
+                                    <td>{obj.deadlinedate}</td>
+                                    <td>{obj.deadlinetime}</td>
 
                                     <td><button onClick={this.deleteFile.bind(this)} id={obj.filename}>Edit</button></td>
                                 </tr>

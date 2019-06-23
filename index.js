@@ -26,6 +26,8 @@ app.use(logger('dev'));
 // Put all API endpoints under '/api'
 
 app.use('/api', require('./routes/file'));
+app.use('/marks', require('./routes/marks.route'));
+
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.

@@ -3,7 +3,7 @@ const multer  = require('multer');
 const { mongo, connection } = require('mongoose');
 const Grid = require('gridfs-stream');
 Grid.mongo = mongo;
-var gfs = Grid(connection.db);
+const gfs = Grid(connection.db);
 let Assignment = require('./assignment.model');
 
 
@@ -12,7 +12,7 @@ const storage = require('multer-gridfs-storage')({
    db: connection.db,
    file: (req, file) => {
       return {
-         filename: file.originalname,
+         filename: +Date.now()+file.originalname,
 
       }
    }
@@ -53,6 +53,8 @@ router.route('/lecview/:lecid').get(function (req, res) {
 });
 
 
+
+
 router.get('/files/:filename', (req, res) => {
    gfs.files.find({ filename: req.params.filename }).toArray((err, files) => {
       if(!files || files.length === 0){
@@ -79,6 +81,41 @@ router.route('/checkview/:assid').get(function (req, res) {
    });
 });
 
+router.route('/lecassview/:aid/:subid').get(function (req, res) {
+
+   let aid = req.params.aid;
+   let subid = req.params.subid;
+
+
+   Assignment.find({name:aid,subject:subid}, function (err, Assignment){
+      res.json(Assignment);
+   }).catch(err=>{
+      console.log(err)
+   });
+});
+
+router.route('/assview/:subid').get(function (req, res) {
+
+   let subid1 = req.params.subid;
+
+
+   Assignment.find({subject:subid1}, function (err, Assignment){
+      res.json(Assignment);
+   });
+});
+
+router.route('/updatecourse/').post(function (req, res) {
+
+   //let subid1 = req.params.subid;
+
+
+   Assignment.updateMany({subject:"bbbb"},{subject:"abcd"},{multi:true}, function (err, Assignment){
+      res.json(Assignment);
+   });
+});
+
+
+
 router.get('/files', (req, res) => {
    gfs.files.find().toArray((err, files) => {
       if(!files || files.length === 0){
@@ -101,6 +138,15 @@ router.post('/files', singleUpload, (req, res) => {
    }
     res.send({ success: false });
 });
+
+router.route('/getlast').get(function (req, res) {
+
+
+  gfs.files.findOne({}, {}, { sort: { '_id' : -1 } }, function (err, resp){
+      res.json(resp);
+   });
+});
+
 
 router.delete('/files/:filename', (req, res) => {
    gfs.remove({ filename: req.params.filename }, (err) => {
