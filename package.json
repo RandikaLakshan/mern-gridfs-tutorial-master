@@ -23,7 +23,7 @@
     "react-router-dom": "^5.0.1",
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2",
-    "yarn": "^1.16.0",
+    "yarn": "^1.22.0",
     "yarn-install": "^1.0.0"
   }
 }
